@@ -1,99 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Bingo Mini App</title>
+<title>Bingo</title>
 
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+* {
+    box-sizing: border-box;
+}
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #111827;
-            color: white;
-            text-align: center;
-        }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #111827;
+    color: white;
+    text-align: center;
+}
 
-        .header {
-            padding: 20px;
-            font-size: 26px;
-            font-weight: bold;
-        }
+.header {
+    padding: 20px;
+    font-size: 30px;
+    font-weight: bold;
+}
 
-        .balance {
-            margin: 10px auto 20px;
-            padding: 15px;
-            width: 85%;
-            background: #1f2937;
-            border-radius: 15px;
-            font-size: 20px;
-        }
+.game {
+    width: 95%;
+    max-width: 420px;
+    margin: auto;
+}
 
-        .card {
-            width: 90%;
-            max-width: 400px;
-            margin: auto;
-            background: #ffffff;
-            padding: 10px;
-            border-radius: 15px;
-        }
+.card {
+    background: white;
+    padding: 10px;
+    border-radius: 15px;
+}
 
-        .row {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-        }
+.title {
+    color: #111827;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 10px;
+}
 
-        .cell {
-            margin: 3px;
-            padding: 14px 5px;
-            background: #e5e7eb;
-            color: #111827;
-            border-radius: 8px;
-            font-weight: bold;
-        }
+.row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+}
 
-        .title {
-            color: #111827;
-            font-size: 20px;
-            padding: 8px;
-        }
+.cell {
+    margin: 3px;
+    padding: 15px 5px;
+    background: #e5e7eb;
+    color: #111827;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+}
 
-        button {
-            margin: 20px 5px;
-            padding: 14px 25px;
-            border: none;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: bold;
-        }
+.cell.free {
+    background: #f59e0b;
+    color: white;
+}
 
-        .play {
-            background: #22c55e;
-            color: white;
-        }
+.cell.selected {
+    background: #22c55e;
+    color: white;
+}
 
-        .cash {
-            background: #f59e0b;
-            color: white;
-        }
-    </style>
+button {
+    width: 90%;
+    margin: 20px auto;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: #2563eb;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+#number {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 15px;
+}
+
+.message {
+    font-size: 18px;
+    margin: 10px;
+}
+</style>
 </head>
 
 <body>
 
-    <div class="header">
-        🎱 BINGO
-    </div>
+<div class="header">
+    🎱 BINGO
+</div>
 
-    <div class="balance">
-        💰 Balance: <b id="balance">0.00 ETB</b>
+<div class="game">
+
+    <div id="number">
+        Press PLAY
     </div>
 
     <div class="card">
-        <div class="title">B I N G O</div>
+
+        <div class="title">
+            B I N G O
+        </div>
 
         <div class="row">
             <div class="cell">1</div>
@@ -110,6 +131,182 @@
             <div class="cell">49</div>
             <div class="cell">67</div>
         </div>
+
+        <div class="row">
+            <div class="cell">8</div>
+            <div class="cell">23</div>
+            <div class="cell free">FREE</div>
+            <div class="cell">52</div>
+            <div class="cell">72</div>
+        </div>
+
+        <div class="row">
+            <div class="cell">11</div>
+            <div class="cell">27</div>
+            <div class="cell">42</div>
+            <div class="cell">56</div>
+            <div class="cell">75</div>
+        </div>
+
+        <div class="row">
+            <div class="cell">14</div>
+            <div class="cell">30</div>
+            <div class="cell">44</div>
+            <div class="cell">59</div>
+            <div class="cell">70</div>
+        </div>
+
+    </div>
+
+    <button onclick="playBingo()">
+        🎱 PLAY BINGO
+    </button>
+
+    <div class="message" id="message">
+        Good luck! 🍀
+    </div>
+
+</div>
+
+<script>
+
+const numbers = [];
+
+for (let i = 1; i <= 75; i++) {
+    numbers.push(i);
+}
+
+function playBingo() {
+
+    if (numbers.length === 0) {
+        document.getElementById("number").innerText =
+            "GAME OVER";
+        return;
+    }
+
+    const random =
+        Math.floor(Math.random() * numbers.length);
+
+    const selected =
+        numbers.splice(random, 1)[0];
+
+    document.getElementById("number").innerText =
+        "🎱 " + selected;
+
+    const cells =
+        document.querySelectorAll(".cell");
+
+    cells.forEach(cell => {
+
+        if (cell.innerText == selected) {
+            cell.classList.add("selected");
+        }
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>        <div class="title">
+            B I N G O
+        </div>
+
+        <div class="row">
+            <div class="cell">1</div>
+            <div class="cell">16</div>
+            <div class="cell">31</div>
+            <div class="cell">46</div>
+            <div class="cell">61</div>
+        </div>
+
+        <div class="row">
+            <div class="cell">4</div>
+            <div class="cell">19</div>
+            <div class="cell">35</div>
+            <div class="cell">49</div>
+            <div class="cell">67</div>
+        </div>
+
+        <div class="row">
+            <div class="cell">8</div>
+            <div class="cell">23</div>
+            <div class="cell free">FREE</div>
+            <div class="cell">52</div>
+            <div class="cell">72</div>
+        </div>
+
+        <div class="row">
+            <div class="cell">11</div>
+            <div class="cell">27</div>
+            <div class="cell">42</div>
+            <div class="cell">56</div>
+            <div class="cell">75</div>
+        </div>
+
+        <div class="row">
+            <div class="cell">14</div>
+            <div class="cell">30</div>
+            <div class="cell">44</div>
+            <div class="cell">59</div>
+            <div class="cell">70</div>
+        </div>
+
+    </div>
+
+    <button onclick="playBingo()">
+        🎱 PLAY BINGO
+    </button>
+
+    <div class="message" id="message">
+        Good luck! 🍀
+    </div>
+
+</div>
+
+<script>
+
+const numbers = [];
+
+for (let i = 1; i <= 75; i++) {
+    numbers.push(i);
+}
+
+function playBingo() {
+
+    if (numbers.length === 0) {
+        document.getElementById("number").innerText =
+            "GAME OVER";
+        return;
+    }
+
+    const random =
+        Math.floor(Math.random() * numbers.length);
+
+    const selected =
+        numbers.splice(random, 1)[0];
+
+    document.getElementById("number").innerText =
+        "🎱 " + selected;
+
+    const cells =
+        document.querySelectorAll(".cell");
+
+    cells.forEach(cell => {
+
+        if (cell.innerText == selected) {
+            cell.classList.add("selected");
+        }
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>        </div>
 
         <div class="row">
             <div class="cell">8</div>
